@@ -152,6 +152,8 @@ workload:
           envFrom:
             - configMapRef:
                 name: nextcloud-config
+            - secretRef:
+                name: nextcloud-secrets
           probes:
             liveness:
               enabled: true
@@ -430,7 +432,7 @@ persistence:
           readOnly: true
   redis-session:
     enabled: true
-    type: configmap
+    type: secret
     objectName: redis-session
     targetSelector:
       main:

@@ -21,6 +21,12 @@
   {{- $_ := mustMergeOverwrite .Values.configmap $configmaps -}}
 {{- end -}}
 
+{{/* Render the secrets for the main pod */}}
+{{- $secrets := include "nextcloud.secrets" . | fromYaml -}}
+{{- if $secrets -}}
+  {{- $_ := mustMergeOverwrite .Values.secret $secrets -}}
+{{- end -}}
+
 {{/* Create hostAliases (resolve ingress host to Node/LB IP) */}}
 {{- $hostAlias := (list (dict
     "ip" .Values.nextcloud.general.accessIP

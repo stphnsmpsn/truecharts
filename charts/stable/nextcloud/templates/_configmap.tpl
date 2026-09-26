@@ -33,7 +33,6 @@
 {{- $accessHostPort := regexReplaceAll ".*://(.*)" $accessUrl "${1}" -}}
 {{- $accessProtocol := regexReplaceAll "(.*)://.*" $accessUrl "${1}" -}}
 {{- $redisHost := .Values.redis.creds.plainhost | trimAll "\"" -}}
-{{- $redisPass := .Values.redis.password | trimAll "\"" -}}
 {{- $healthHost := "kube.internal.healthcheck" -}}
 
 php-tune:
@@ -58,16 +57,6 @@ opcache:
       opcache.memory_consumption={{ .Values.nextcloud.opcache.memory_consumption }}
       opcache.revalidate_freq={{ .Values.nextcloud.opcache.revalidate_freq }}
       opcache.jit_buffer_size={{ printf "%vM" .Values.nextcloud.opcache.jit_buffer_size }}
-
-redis-session:
-  enabled: true
-  data:
-    redis-session.ini: |
-      session.save_handler = redis
-      session.save_path = {{ printf "tcp://%v:6379?auth=%v" $redisHost $redisPass | quote }}
-      redis.session.locking_enabled = 1
-      redis.session.lock_retries = -1
-      redis.session.lock_wait_time = 10000
 
 hpb-config:
   enabled: {{ .Values.nextcloud.notify_push.enabled }}
@@ -114,22 +103,18 @@ nextcloud-config:
     {{/* Database */}}
     POSTGRES_DB: {{ .Values.cnpg.main.database | quote }}
     POSTGRES_USER: {{ .Values.cnpg.main.user | quote }}
-    POSTGRES_PASSWORD: {{ .Values.cnpg.main.password | trimAll "\"" }}
     POSTGRES_HOST: {{ .Values.cnpg.main.creds.host | trimAll "\"" }}
 
     {{/* Compatibility Layer to support database changes */}}
     NX_POSTGRES_NAME: {{ .Values.cnpg.main.database | quote }}
     NX_POSTGRES_USER: {{ .Values.cnpg.main.user | quote }}
-    NX_POSTGRES_PASSWORD: {{ .Values.cnpg.main.password | trimAll "\"" }}
     NX_POSTGRES_HOST: {{ .Values.cnpg.main.creds.host | trimAll "\"" }}
 
     {{/* Redis */}}
     NX_REDIS_HOST: {{ $redisHost }}
-    NX_REDIS_PASS: {{ $redisPass }}
 
     {{/* Nextcloud INITIAL credentials */}}
     NEXTCLOUD_ADMIN_USER: {{ .Values.nextcloud.credentials.initialAdminUser | quote }}
-    NEXTCLOUD_ADMIN_PASSWORD: {{ .Values.nextcloud.credentials.initialAdminPassword | quote }}
 
     {{/* PHP Variables */}}
     PHP_MEMORY_LIMIT: {{ .Values.nextcloud.php.memory_limit | quote }}
@@ -207,7 +192,6 @@ nextcloud-config:
     NX_ONLYOFFICE_INTERNAL_URL: {{ .Values.nextcloud.onlyoffice.internal_url | quote }}
     NX_ONLYOFFICE_VERIFY_SSL: {{ .Values.nextcloud.onlyoffice.verify_ssl | quote }}
     NX_ONLYOFFICE_NEXTCLOUD_INTERNAL_URL: {{ printf "http://%v.svc.cluster.local:%v" $fqdn .Values.service.main.ports.main.port }}
-    NX_ONLYOFFICE_JWT: {{ .Values.nextcloud.onlyoffice.jwt | quote }}
     NX_ONLYOFFICE_JWT_HEADER: {{ .Values.nextcloud.onlyoffice.jwt_header | quote }}
     {{- end }}
 
