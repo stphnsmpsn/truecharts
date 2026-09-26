@@ -142,6 +142,12 @@ service:
         protocol: http
         targetPort: 3000
         port: 3000
+grafana:
+  # Initial admin credentials. The password is stored in the <release>-admin Secret and read from
+  # there by the main container and the provisioning sidecars, never as a plain env string.
+  adminUser: "admin"
+  adminPassword: "testpassword"
+
 workload:
   main:
     replicas: 1
@@ -156,8 +162,11 @@ workload:
       containers:
         main:
           env:
-            GF_SECURITY_ADMIN_USER: "admin"
-            GF_SECURITY_ADMIN_PASSWORD: "testpassword"
+            GF_SECURITY_ADMIN_USER: "{{ .Values.grafana.adminUser }}"
+            GF_SECURITY_ADMIN_PASSWORD:
+              secretKeyRef:
+                name: admin
+                key: password
             GF_INSTALL_PLUGINS: ""
             GF_AUTH_LDAP_ENABLED: "false"
             GF_AUTH_LDAP_ALLOW_SIGN_UP: "false"
@@ -200,8 +209,11 @@ workload:
             # WATCH_SERVER_TIMEOUT: 3600
             # WATCH_CLIENT_TIMEOUT: 3600
             SKIP_TLS_VERIFY: false
-            REQ_USERNAME: "{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_USER }}"
-            REQ_PASSWORD: "{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_PASSWORD }}"
+            REQ_USERNAME: "{{ .Values.grafana.adminUser }}"
+            REQ_PASSWORD:
+              secretKeyRef:
+                name: admin
+                key: password
             REQ_URL: "http://localhost:3000/api/admin/provisioning/dashboards/reload"
             REQ_METHOD: POST
           probes:
@@ -237,8 +249,11 @@ workload:
             # WATCH_SERVER_TIMEOUT: 3600
             # WATCH_CLIENT_TIMEOUT: 3600
             SKIP_TLS_VERIFY: false
-            REQ_USERNAME: "{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_USER }}"
-            REQ_PASSWORD: "{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_PASSWORD }}"
+            REQ_USERNAME: "{{ .Values.grafana.adminUser }}"
+            REQ_PASSWORD:
+              secretKeyRef:
+                name: admin
+                key: password
             REQ_URL: "http://localhost:3000/api/admin/provisioning/datasources/reload"
             REQ_METHOD: POST
           probes:
@@ -274,8 +289,11 @@ workload:
             # WATCH_SERVER_TIMEOUT: 3600
             # WATCH_CLIENT_TIMEOUT: 3600
             SKIP_TLS_VERIFY: false
-            REQ_USERNAME: "{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_USER }}"
-            REQ_PASSWORD: "{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_PASSWORD }}"
+            REQ_USERNAME: "{{ .Values.grafana.adminUser }}"
+            REQ_PASSWORD:
+              secretKeyRef:
+                name: admin
+                key: password
             REQ_URL: "http://localhost:3000/api/admin/provisioning/alerts/reload"
             REQ_METHOD: POST
           probes:
@@ -311,8 +329,11 @@ workload:
             # WATCH_SERVER_TIMEOUT: 3600
             # WATCH_CLIENT_TIMEOUT: 3600
             SKIP_TLS_VERIFY: false
-            REQ_USERNAME: "{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_USER }}"
-            REQ_PASSWORD: "{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_PASSWORD }}"
+            REQ_USERNAME: "{{ .Values.grafana.adminUser }}"
+            REQ_PASSWORD:
+              secretKeyRef:
+                name: admin
+                key: password
             REQ_URL: "http://localhost:3000/api/admin/provisioning/plugins/reload"
             REQ_METHOD: POST
           probes:
@@ -348,8 +369,11 @@ workload:
             # WATCH_SERVER_TIMEOUT: 3600
             # WATCH_CLIENT_TIMEOUT: 3600
             SKIP_TLS_VERIFY: false
-            REQ_USERNAME: "{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_USER }}"
-            REQ_PASSWORD: "{{ .Values.workload.main.podSpec.containers.main.env.GF_SECURITY_ADMIN_PASSWORD }}"
+            REQ_USERNAME: "{{ .Values.grafana.adminUser }}"
+            REQ_PASSWORD:
+              secretKeyRef:
+                name: admin
+                key: password
             REQ_URL: "http://localhost:3000/api/admin/provisioning/notifiers/reload"
             REQ_METHOD: POST
           probes:

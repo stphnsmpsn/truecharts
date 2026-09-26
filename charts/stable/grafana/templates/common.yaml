@@ -1,5 +1,11 @@
 {{- include "tc.v1.common.loader.init" . }}
 
+{{/* Render the admin credentials Secret */}}
+{{- $secrets := include "grafana.secrets" . | fromYaml -}}
+{{- if $secrets -}}
+  {{- $_ := set .Values.secret "admin" $secrets -}}
+{{- end -}}
+
 {{/* Render generated configmap */}}
 {{- $configmap := include "grafana.download_dashboards" (dict
     "dashboards" .Values.dashboards.grafana
