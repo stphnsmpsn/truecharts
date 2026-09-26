@@ -110,7 +110,11 @@ env:
       expandObjectName: false
       name: '{{ printf "%s-%s" .Release.Name "rediscreds" }}'
       key: plainhost
-  REDIS_PASSWORD: "{{ .Values.redis.password }}"
+  REDIS_PASSWORD:
+    secretKeyRef:
+      expandObjectName: false
+      name: '{{ printf "%s-%s" .Release.Name "rediscreds" }}'
+      key: redis-password
   REDIS_PORT: "6379"
 command:
   - "/bin/sh"
