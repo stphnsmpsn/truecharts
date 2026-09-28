@@ -1203,6 +1203,14 @@ cnpg:
       ## See .Values.resources for more info
       # resources:
 
+      # Seconds an instance may take to stop before it is killed (CNPG default 1800); the pod's
+      # terminationGracePeriodSeconds follows it.
+      # stopDelay: 1800
+      # Seconds spent waiting for clients to disconnect (smart shutdown) before a fast shutdown
+      # (CNPG default 180). Lower it on a single instance whose clients keep pools open, or every
+      # restart waits the full default.
+      # smartShutdownTimeout: 180
+
       # Method to follow to upgrade the primary server during a rolling update procedure, after all replicas have been
       # successfully updated. It can be switchover (default) or in-place (restart).
       primaryUpdateMethod: switchover

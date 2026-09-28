@@ -196,6 +196,12 @@ spec:
   primaryUpdateMethod: {{ $primaryUpdateMethod }}
   logLevel: {{ $logLevel }}
   instances: {{ $instances }}
+  {{- with $objectData.cluster.stopDelay }}
+  stopDelay: {{ . }}
+  {{- end }}
+  {{- with $objectData.cluster.smartShutdownTimeout }}
+  smartShutdownTimeout: {{ . }}
+  {{- end }}
   {{- /* Create a dict for storing env's so it can be checked for dupes */ -}}
   {{- $_ := set $objectData.cluster "envDupe" dict -}}
   {{- with (include "tc.v1.common.lib.container.envFrom" (dict
